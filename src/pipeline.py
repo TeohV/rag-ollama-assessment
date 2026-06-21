@@ -40,11 +40,6 @@ def answer_question(question, config: RAGConfig, n_results=None):
 
     matched_document_ids = find_matching_document_ids(question, metadata)
 
-    # The user's wording doesn't always match the source documents' wording
-    # (e.g. "refund" vs. "reimbursement"). Ask the LLM to rephrase the
-    # question for retrieval before embedding it. Best-effort: if this call
-    # fails for any reason (Ollama down, bad JSON, etc.) we fall back to the
-    # raw question rather than failing the whole request.
     retrieval_query = question
     try:
         route = classify_query(question, metadata, config)
@@ -56,9 +51,6 @@ def answer_question(question, config: RAGConfig, n_results=None):
     n = n_results or config.default_n_results
 
     if len(matched_document_ids) >= 2:
-        # Comparison-style query naming multiple documents: guarantee each
-        # named document gets retrieval slots instead of one pooled search
-        # letting the higher-scoring document crowd out the other.
         sources = retrieve_chunks_for_documents(
             query=retrieval_query,
             config=config,
