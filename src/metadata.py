@@ -57,7 +57,6 @@ def create_metadata(documents, authorities):
     for row_index, row in documents.iterrows():
         doc_id = to_int_id(row["AGORA ID"], "AGORA ID")
 
-        # Skip blank rows or documents without IDs.
         if doc_id is None:
             continue
 
