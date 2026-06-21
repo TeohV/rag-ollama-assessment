@@ -99,14 +99,6 @@ def create_metadata(documents, authorities):
     return meta
 
 def find_matching_document_ids(query, meta, min_match_len=6):
-    """Find every document whose name appears in the query as a substring.
-
-    Returns doc_ids ordered by match length (longest/most-specific first),
-    deduplicated. A minimum match length avoids noise from very short
-    names matching incidentally inside unrelated text. Use this (instead
-    of the single-match version) for anything that might name more than
-    one document, e.g. "compare X and Y" or "X vs Y" questions.
-    """
     query_lower = query.lower()
     matches = {}  # doc_id -> longest match length found for that doc
 
@@ -132,6 +124,5 @@ def find_matching_document_ids(query, meta, min_match_len=6):
 
 
 def find_matching_document_id(query, meta):
-    """Backward-compatible single-best-match wrapper."""
     matches = find_matching_document_ids(query, meta)
     return matches[0] if matches else None
