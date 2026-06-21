@@ -48,14 +48,6 @@ Answer:
 
 
 def _verify_citations(answer, sources, window=200):
-    """Best-effort check: flag specific article/section numbers cited near a
-    [Source N] tag that don't actually appear in that source's retrieved
-    text. The prompt instructs the model not to invent these, but LLMs
-    still sometimes produce a plausible-sounding number instead of reading
-    it from the chunk -- this catches the common case cheaply. Proximity
-    based, not perfect, but a useful safety net rather than trusting the
-    model's citation discipline alone.
-    """
     sources_by_id = {s.source_id: s for s in sources}
     warnings = []
     seen = set()
@@ -96,7 +88,7 @@ def generate_answer(question, sources, config):
     if warnings:
         answer += (
             "\n\n---\n"
-            "⚠️ Unverified citations (not found verbatim in the retrieved text -- "
+            "Unverified citations (not found verbatim in the retrieved text -- "
             "double-check against the source before relying on these):\n"
         )
         answer += "\n".join(f"- {w}" for w in warnings)
