@@ -1,0 +1,5 @@
+pandas
+chromadb
+requests
+langchain-text-splitters
+rank_bm25
