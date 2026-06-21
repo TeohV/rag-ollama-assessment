@@ -100,7 +100,7 @@ def create_metadata(documents, authorities):
 
 def find_matching_document_ids(query, meta, min_match_len=6):
     query_lower = query.lower()
-    matches = {}  # doc_id -> longest match length found for that doc
+    matches = {}
 
     for doc_id, doc_meta in meta.items():
         names = [
