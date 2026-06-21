@@ -123,6 +123,3 @@ def find_matching_document_ids(query, meta, min_match_len=6):
     return [int(doc_id) for doc_id, _ in ranked]
 
 
-def find_matching_document_id(query, meta):
-    matches = find_matching_document_ids(query, meta)
-    return matches[0] if matches else None
