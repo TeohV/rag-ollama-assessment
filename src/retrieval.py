@@ -42,16 +42,6 @@ def _vector_candidates(query, config, n_candidates, document_id):
 
 
 def retrieve_chunks(query, config, n_results=8, document_id=None, n_candidates=30):
-    """Hybrid retrieval: dense vector search + BM25 keyword search, fused
-    with Reciprocal Rank Fusion (RRF).
-
-    Vector-only search can miss a chunk that is clearly "the" answer just
-    because it leans on specific wording (a name, a section number, a
-    term like "refund") that doesn't embed close to the user's phrasing.
-    BM25 catches literal matches; RRF means a chunk only needs to rank
-    well on *either* signal to surface near the top, instead of needing
-    both. This widens recall for every query, not a specific one.
-    """
     vector_ids, vector_lookup = _vector_candidates(
         query, config, n_candidates, document_id
     )
@@ -108,17 +98,6 @@ def _split_quota(n_results, n_groups):
 
 
 def retrieve_chunks_for_documents(query, config, document_ids, n_results=8, n_candidates=30):
-    """Retrieve chunks for a query that names multiple documents (e.g. a
-    "compare X and Y" question), giving each document a guaranteed slot
-    quota instead of one pooled search.
-
-    A single pooled vector+keyword search lets whichever document scores
-    higher overall fill all the result slots, silently shutting the other
-    one out -- the model then has no choice but to either skip it or
-    answer from memory, which is what caused the EU AI Act vs. NIST
-    comparison to cite NIST sources for EU AI Act claims. Retrieving
-    per-document with a fixed quota guarantees both sides are represented.
-    """
     if not document_ids:
         return retrieve_chunks(query, config, n_results=n_results, n_candidates=n_candidates)
 
@@ -137,9 +116,6 @@ def retrieve_chunks_for_documents(query, config, document_ids, n_results=8, n_ca
             n_candidates=n_candidates,
         )
         all_chunks.extend(chunks)
-
-    # Re-number source_id sequentially across the merged list so citations
-    # in the generated answer ([Source N]) line up with what's printed.
     return [
         replace(chunk, source_id=source_id)
         for source_id, chunk in enumerate(all_chunks, start=1)
