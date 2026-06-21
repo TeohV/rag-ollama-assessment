@@ -17,14 +17,6 @@ def _index_path(config):
 
 
 def build_keyword_index(chunks, config):
-    """Build and persist a BM25 keyword index alongside the vector index.
-
-    Dense embeddings are good at "meaning" but routinely blur over exact
-    terms: specific names, section numbers, dollar amounts, or words the
-    source document uses that the user didn't type. BM25 is good at
-    exactly that. Running both and fusing the results (see
-    retrieval.retrieve_chunks) catches cases either one misses alone.
-    """
     if not chunks:
         return
 
@@ -76,11 +68,6 @@ def _load_index(config):
 
 
 def keyword_search(query, config, n_results=8, document_id=None):
-    """Return [(chunk_id, record), ...] ranked best-first by BM25 score.
-
-    Returns an empty list (rather than raising) if no keyword index has
-    been built yet, so callers can treat hybrid retrieval as optional.
-    """
     index = _load_index(config)
 
     if index is None:
